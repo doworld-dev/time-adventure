@@ -5,12 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#fff8e8" />
   <title>시간 탐험대</title>
-  <link rel="stylesheet" href="./style.css" />
+  <link rel="stylesheet" href="./style.css?v=0.2.1" />
 </head>
 <body>
   <main class="app-shell">
     <header class="hero">
-      <div class="hero-badge">⏰ 시간 탐험대 <span class="version">v0.2</span></div>
+      <div class="hero-badge">⏰ 시간 탐험대 <span class="version">v0.2.1</span></div>
       <h1>시간을 바꿔 보자!</h1>
       <p>60분이 모이면 1시간! 직접 묶어 보며 익혀요.</p>
     </header>
@@ -24,22 +24,22 @@
     <section class="game" aria-label="시간 계산 게임">
       <div class="topline">
         <div class="status"><div class="score">⭐ <span id="scoreText">0</span></div><div class="streak">🔥 <span id="streakText">0</span>연속</div></div>
-        <div class="mode-pill" id="typePill"></div>
+        <div class="mode-pill" id="typePill">문제 준비 중</div>
       </div>
 
       <section class="question">
-        <div class="eyebrow" id="questionEyebrow"></div>
-        <div class="big" id="questionBig"></div>
+        <div class="eyebrow" id="questionEyebrow">문제를 준비하고 있어요.</div>
+        <div class="big" id="questionBig">...</div>
         <div class="ask" id="questionAsk"></div>
       </section>
 
-      <div id="minutesGame">
+      <div id="minutesGame" hidden>
         <p class="helper">아래 <b>60분 묶기</b>를 눌러 시간을 만들어 보세요.</p>
         <div class="minute-board">
           <div class="source-number"><span id="sourceMinutes"></span><small>에서</small></div>
           <div class="bundle-area">
             <div class="bundle-list" id="bundleList"></div>
-            <div class="remainder-card" id="remainderCard"><span id="remainderValue">0</span><small>남은 분</small></div>
+            <div class="remainder-card" id="remainderCard"><span id="remainderValue">0분</span><small>남은 분</small></div>
           </div>
           <div class="bundle-actions">
             <button type="button" class="bundle-btn" id="bundleBtn">➕ 60분 묶기</button>
@@ -54,11 +54,11 @@
         <div class="answer-choice" id="answerChoices"></div>
       </div>
 
-      <div class="message" id="message" aria-live="polite"></div>
+      <div class="message" id="message" aria-live="polite">문제를 준비하고 있어요.</div>
       <div class="answer-box" id="answerBox" aria-live="polite" hidden><div class="answer" id="answerText"></div><div class="formula" id="formulaText"></div></div>
       <div class="actions"><button type="button" class="btn btn-secondary" id="resetBtn">↩ 처음부터</button><button type="button" class="btn btn-primary" id="checkBtn">정답 확인</button><button type="button" class="btn btn-primary" id="nextBtn" hidden>다음 문제 →</button></div>
     </section>
   </main>
-  <script src="./app.js"></script>
+  <script src="./app.js?v=0.2.1"></script>
 </body>
 </html>
