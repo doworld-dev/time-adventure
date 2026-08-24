@@ -5,14 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#fff8e8" />
   <title>시간 탐험대</title>
-  <link rel="stylesheet" href="./style.css?v=0.2.1" />
+  <link rel="stylesheet" href="./style.css?v=0.3.0" />
 </head>
 <body>
   <main class="app-shell">
     <header class="hero">
-      <div class="hero-badge">⏰ 시간 탐험대 <span class="version">v0.2.1</span></div>
+      <div class="hero-badge">⏰ 시간 탐험대 <span class="version">v0.3</span></div>
       <h1>시간을 바꿔 보자!</h1>
-      <p>60분이 모이면 1시간! 직접 묶어 보며 익혀요.</p>
+      <p>60분을 묶고, 1시간을 풀면서 시간과 분을 익혀요.</p>
     </header>
 
     <section class="toolbar" aria-label="난이도 선택">
@@ -39,7 +39,7 @@
           <div class="source-number"><span id="sourceMinutes"></span><small>에서</small></div>
           <div class="bundle-area">
             <div class="bundle-list" id="bundleList"></div>
-            <div class="remainder-card" id="remainderCard"><span id="remainderValue">0분</span><small>남은 분</small></div>
+            <div class="remainder-card"><span id="remainderValue">0분</span><small>남은 분</small></div>
           </div>
           <div class="bundle-actions">
             <button type="button" class="bundle-btn" id="bundleBtn">➕ 60분 묶기</button>
@@ -49,9 +49,18 @@
       </div>
 
       <div id="timeGame" hidden>
-        <p class="helper">시간을 60분짜리 묶음으로 바꿔 보세요.</p>
-        <div class="time-visual" id="timeVisual"></div>
-        <div class="answer-choice" id="answerChoices"></div>
+        <p class="helper">이번에는 <b>1시간을 60분으로 풀어</b> 보세요.</p>
+        <div class="unpack-board">
+          <div class="time-source" id="timeSource"></div>
+          <div class="unpack-arrow">↓</div>
+          <div class="time-visual" id="timeVisual"></div>
+          <div class="bundle-actions">
+            <button type="button" class="bundle-btn" id="unpackBtn">🧩 1시간 풀기</button>
+            <button type="button" class="undo-btn" id="packBackBtn">↩ 되돌리기</button>
+          </div>
+        </div>
+        <div class="sum-hint" id="sumHint" hidden></div>
+        <div class="answer-choice" id="answerChoices" hidden></div>
       </div>
 
       <div class="message" id="message" aria-live="polite">문제를 준비하고 있어요.</div>
@@ -59,6 +68,6 @@
       <div class="actions"><button type="button" class="btn btn-secondary" id="resetBtn">↩ 처음부터</button><button type="button" class="btn btn-primary" id="checkBtn">정답 확인</button><button type="button" class="btn btn-primary" id="nextBtn" hidden>다음 문제 →</button></div>
     </section>
   </main>
-  <script src="./app.js?v=0.2.1"></script>
+  <script src="./app.js?v=0.3.0"></script>
 </body>
 </html>
