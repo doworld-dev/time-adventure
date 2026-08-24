@@ -4,8 +4,8 @@
   const $ = (selector) => document.querySelector(selector);
   const requiredIds = [
     'message','answerBox','scoreText','streakText','typePill','questionEyebrow','questionBig','questionAsk',
-    'minutesGame','timeGame','sourceMinutes','bundleList','remainderValue','bundleBtn','undoBtn','timeVisual',
-    'answerChoices','answerText','formulaText','resetBtn','checkBtn','nextBtn'
+    'minutesGame','timeGame','sourceMinutes','bundleList','remainderValue','bundleBtn','undoBtn','timeSource','timeVisual',
+    'unpackBtn','packBackBtn','sumHint','answerChoices','answerText','formulaText','resetBtn','checkBtn','nextBtn'
   ];
 
   const missing = requiredIds.filter((id) => !document.getElementById(id));
@@ -21,35 +21,29 @@
   let streak = 0;
   let currentProblem = null;
   let bundles = 0;
+  let unpackedHours = 0;
   let selectedChoice = null;
   let lastKeys = [];
 
-  function rand(array) {
-    return array[Math.floor(Math.random() * array.length)];
-  }
-
+  function rand(array) { return array[Math.floor(Math.random() * array.length)]; }
   function randInt(min, max, step = 10) {
     const count = Math.floor((max - min) / step);
     return min + Math.floor(Math.random() * (count + 1)) * step;
   }
-
-  function problemKey(problem) {
-    return `${problem.type}-${problem.minutes}`;
-  }
+  function problemKey(problem) { return `${problem.type}-${problem.minutes}`; }
 
   function generateProblem() {
     let problem;
     let key;
     let tries = 0;
-
     do {
       const type = Math.random() < 0.5 ? 'minutesToTime' : 'timeToMinutes';
-
       if (type === 'minutesToTime') {
-        let minutes;
-        if (difficulty === 1) minutes = rand([60, 90, 120, 150, 180, 200]);
-        else if (difficulty === 2) minutes = randInt(70, 240, 10);
-        else minutes = randInt(70, 360, 10);
+        const minutes = difficulty === 1
+          ? rand([60, 90, 120, 150, 180, 200])
+          : difficulty === 2
+            ? randInt(70, 240, 10)
+            : randInt(70, 360, 10);
         problem = { type, minutes, label: `${minutes}분` };
       } else {
         let hours;
@@ -64,15 +58,9 @@
           hours = rand([1, 2, 3, 4, 5]);
           mins = rand([0, 10, 20, 30, 40, 50]);
         }
-
-        let label;
-        if (mins === 30) label = `${hours}시간 반`;
-        else if (mins === 0) label = `${hours}시간`;
-        else label = `${hours}시간 ${mins}분`;
-
+        const label = mins === 30 ? `${hours}시간 반` : mins === 0 ? `${hours}시간` : `${hours}시간 ${mins}분`;
         problem = { type, minutes: hours * 60 + mins, hours, mins, label };
       }
-
       key = problemKey(problem);
       tries += 1;
     } while (lastKeys.includes(key) && tries < 20);
@@ -82,21 +70,17 @@
     return problem;
   }
 
-  function maxBundles() {
-    return Math.floor(currentProblem.minutes / 60);
-  }
+  function maxBundles() { return Math.floor(currentProblem.minutes / 60); }
 
   function renderBundles() {
     const list = $('#bundleList');
     list.innerHTML = '';
-
     for (let i = 0; i < bundles; i += 1) {
       const el = document.createElement('div');
       el.className = 'hour-bundle';
       el.innerHTML = '<span class="clock-icon">🕐</span><strong>1시간</strong><small>60분 묶음</small>';
       list.appendChild(el);
     }
-
     const left = currentProblem.minutes - bundles * 60;
     $('#remainderValue').textContent = `${left}분`;
     $('#bundleBtn').disabled = left < 60;
@@ -123,7 +107,6 @@
       if (value > 0 && value <= 420) values.add(value);
       guard += 1;
     }
-
     let fallback = 30;
     while (values.size < 4) {
       const value = correct + fallback;
@@ -133,9 +116,7 @@
 
     const box = $('#answerChoices');
     box.innerHTML = '';
-    const shuffled = [...values].sort(() => Math.random() - 0.5);
-
-    shuffled.forEach((value) => {
+    [...values].sort(() => Math.random() - 0.5).forEach((value) => {
       const button = document.createElement('button');
       button.type = 'button';
       button.className = 'choice-btn';
@@ -146,34 +127,75 @@
         button.classList.add('selected');
         selectedChoice = value;
         message.className = 'message';
-        message.textContent = '이 답이 맞을까요? 정답 확인을 눌러 보세요.';
+        message.textContent = '좋아요! 계산한 답을 골랐어요. 이제 정답을 확인해 보세요.';
       });
       box.appendChild(button);
     });
   }
 
-  function renderTimeVisual() {
+  function renderTimeSource() {
+    const source = $('#timeSource');
+    source.innerHTML = '';
+    const remainingHours = currentProblem.hours - unpackedHours;
+
+    if (remainingHours > 0) {
+      const hours = document.createElement('div');
+      hours.className = 'source-hour-card';
+      hours.innerHTML = `<span>🕐</span><strong>${remainingHours}시간</strong><small>아직 풀지 않은 시간</small>`;
+      source.appendChild(hours);
+    }
+
+    if (currentProblem.mins > 0) {
+      const rest = document.createElement('div');
+      rest.className = 'source-rest-card';
+      rest.innerHTML = `<span>➕</span><strong>${currentProblem.mins}분</strong><small>그대로 두는 분</small>`;
+      source.appendChild(rest);
+    }
+  }
+
+  function renderUnpackedVisual() {
     const box = $('#timeVisual');
     box.innerHTML = '';
 
-    for (let i = 0; i < currentProblem.hours; i += 1) {
+    for (let i = 0; i < unpackedHours; i += 1) {
       const el = document.createElement('div');
-      el.className = 'given-hour';
-      el.innerHTML = '<span>🕐</span><strong>60분</strong>';
+      el.className = 'given-hour unpacked';
+      el.innerHTML = '<span>🧩</span><strong>60분</strong><small>1시간을 풀었어요</small>';
       box.appendChild(el);
     }
 
     if (currentProblem.mins > 0) {
-      const el = document.createElement('div');
-      el.className = 'given-rest';
-      el.innerHTML = `<span>➕</span><strong>${currentProblem.mins}분</strong>`;
-      box.appendChild(el);
+      const rest = document.createElement('div');
+      rest.className = 'given-rest';
+      rest.innerHTML = `<span>➕</span><strong>${currentProblem.mins}분</strong><small>남은 분</small>`;
+      box.appendChild(rest);
+    }
+
+    renderTimeSource();
+    $('#unpackBtn').disabled = unpackedHours >= currentProblem.hours;
+    $('#packBackBtn').disabled = unpackedHours === 0;
+
+    const allUnpacked = unpackedHours === currentProblem.hours;
+    $('#sumHint').hidden = !allUnpacked;
+    $('#answerChoices').hidden = !allUnpacked;
+
+    if (allUnpacked) {
+      const parts = Array(currentProblem.hours).fill('60');
+      if (currentProblem.mins) parts.push(String(currentProblem.mins));
+      $('#sumHint').textContent = `${parts.join(' + ')} = ?`;
+      if (!$('#answerChoices').children.length) makeChoices();
+      message.className = 'message success';
+      message.textContent = '모든 시간을 60분으로 풀었어요! 이제 모두 더한 답을 골라 보세요.';
+    } else {
+      $('#answerChoices').innerHTML = '';
+      selectedChoice = null;
     }
   }
 
   function renderProblem() {
     currentProblem = generateProblem();
     bundles = 0;
+    unpackedHours = 0;
     selectedChoice = null;
     answerBox.hidden = true;
     $('#nextBtn').hidden = true;
@@ -194,16 +216,18 @@
       renderBundles();
     } else {
       $('#typePill').textContent = '시간 → 분';
-      $('#questionEyebrow').textContent = '이번에는 분으로 바꿔 볼까요?';
+      $('#questionEyebrow').textContent = '1시간을 60분으로 풀어 볼까요?';
       $('#questionAsk').textContent = '모두 몇 분일까요?';
       $('#minutesGame').hidden = true;
       $('#timeGame').hidden = false;
-      renderTimeVisual();
-      makeChoices();
+      $('#sumHint').hidden = true;
+      $('#answerChoices').hidden = true;
+      $('#answerChoices').innerHTML = '';
       message.className = 'message';
       message.textContent = currentProblem.mins === 30
-        ? '반 시간은 30분이에요.'
-        : '시계 하나는 60분이에요.';
+        ? '1시간은 60분, 반 시간은 30분이에요. 먼저 시간을 하나씩 풀어 보세요.'
+        : '1시간을 하나씩 60분으로 바꿔 보세요.';
+      renderUnpackedVisual();
     }
   }
 
@@ -214,7 +238,7 @@
       message.className = 'message try';
       message.textContent = currentProblem.type === 'minutesToTime'
         ? '60분씩 더 묶을 수 있는지 살펴보세요.'
-        : '시계 하나를 60분으로 바꿔서 다시 더해 보세요.';
+        : '60분으로 풀어낸 것들을 다시 더해 보세요.';
       return;
     }
 
@@ -234,7 +258,7 @@
 
     const parts = Array(hours).fill('60분');
     if (remainder) parts.push(`${remainder}분`);
-    $('#formulaText').textContent = `${currentProblem.minutes}분 = ${parts.join(' + ')}`;
+    $('#formulaText').textContent = `${parts.join(' + ')} = ${currentProblem.minutes}분`;
 
     answerBox.hidden = false;
     $('#checkBtn').hidden = true;
@@ -247,9 +271,15 @@
       return;
     }
 
+    if (unpackedHours < currentProblem.hours) {
+      message.className = 'message try';
+      message.textContent = '먼저 남은 시간을 모두 60분으로 풀어 보세요.';
+      return;
+    }
+
     if (selectedChoice === null) {
       message.className = 'message try';
-      message.textContent = '먼저 답을 하나 골라 보세요.';
+      message.textContent = '계산한 답을 하나 골라 보세요.';
       return;
     }
 
@@ -277,6 +307,22 @@
     }
   });
 
+  $('#unpackBtn').addEventListener('click', () => {
+    if (currentProblem.type === 'timeToMinutes' && unpackedHours < currentProblem.hours) {
+      unpackedHours += 1;
+      renderUnpackedVisual();
+    }
+  });
+
+  $('#packBackBtn').addEventListener('click', () => {
+    if (currentProblem.type === 'timeToMinutes' && unpackedHours > 0) {
+      unpackedHours -= 1;
+      message.className = 'message';
+      message.textContent = '60분 하나를 다시 1시간으로 돌렸어요.';
+      renderUnpackedVisual();
+    }
+  });
+
   document.querySelectorAll('.diff-btn').forEach((button) => {
     button.addEventListener('click', () => {
       difficulty = Number(button.dataset.diff);
@@ -290,6 +336,7 @@
   $('#checkBtn').addEventListener('click', checkAnswer);
   $('#resetBtn').addEventListener('click', () => {
     bundles = 0;
+    unpackedHours = 0;
     selectedChoice = null;
     answerBox.hidden = true;
     $('#nextBtn').hidden = true;
@@ -299,8 +346,12 @@
       message.textContent = '다시 60분씩 묶어 보세요.';
       renderBundles();
     } else {
-      renderTimeVisual();
-      makeChoices();
+      $('#answerChoices').innerHTML = '';
+      $('#answerChoices').hidden = true;
+      $('#sumHint').hidden = true;
+      message.className = 'message';
+      message.textContent = '다시 1시간씩 60분으로 풀어 보세요.';
+      renderUnpackedVisual();
     }
   });
   $('#nextBtn').addEventListener('click', renderProblem);
