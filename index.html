@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#fff8e8" />
+  <title>시간 탐험대</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <header class="hero">
+      <div class="hero-badge">⏰ 시간 탐험대</div>
+      <h1>시간을 바꿔 보자!</h1>
+      <p>60분씩 묶으면서 시간과 분을 익혀요.</p>
+    </header>
+
+    <section class="toolbar" aria-label="게임 설정">
+      <div class="difficulty" aria-label="난이도 선택">
+        <button type="button" class="diff-btn active" data-diff="1">🌱 1단계</button>
+        <button type="button" class="diff-btn" data-diff="2">🌿 2단계</button>
+        <button type="button" class="diff-btn" data-diff="3">🌳 3단계</button>
+      </div>
+      <div class="mode-pill">🔄 무한 랜덤 문제</div>
+    </section>
+
+    <section class="game" aria-label="시간 계산 게임">
+      <div class="topline">
+        <div class="status">
+          <div class="score">⭐ <span id="scoreText">0</span>점</div>
+          <div class="streak">🔥 <span id="streakText">0</span>연속</div>
+        </div>
+        <div class="mode-pill" id="typePill">분 → 시간</div>
+      </div>
+
+      <section class="question">
+        <div class="eyebrow" id="questionEyebrow"></div>
+        <div class="big" id="questionBig"></div>
+        <div class="ask" id="questionAsk"></div>
+      </section>
+
+      <p class="helper" id="helperText"></p>
+
+      <div id="blockGame">
+        <div class="workspace">
+          <section class="bank">
+            <div class="section-title"><span>🧩 10분 블록</span><small id="remainingText"></small></div>
+            <div class="tokens" id="tokenBank"></div>
+          </section>
+
+          <section class="clock-zone">
+            <div class="section-title"><span>🕐 시간 시계</span><small>하나에 60분!</small></div>
+            <div class="clocks" id="clocks"></div>
+          </section>
+        </div>
+      </div>
+
+      <div id="choiceGame" hidden>
+        <div class="answer-choice" id="answerChoices"></div>
+      </div>
+
+      <div class="message" id="message" aria-live="polite"></div>
+
+      <div class="answer-box" id="answerBox" aria-live="polite" hidden>
+        <div class="answer" id="answerText"></div>
+        <div class="formula" id="formulaText"></div>
+      </div>
+
+      <div class="actions">
+        <button type="button" class="btn btn-secondary" id="resetBtn">↩ 다시 해보기</button>
+        <button type="button" class="btn btn-primary" id="checkBtn">정답 확인하기</button>
+        <button type="button" class="btn btn-primary" id="nextBtn" hidden>새 문제 →</button>
+      </div>
+    </section>
+  </main>
+  <script src="./app.js"></script>
+</body>
+</html>
