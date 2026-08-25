@@ -68,12 +68,23 @@ https://doworld-dev.github.io/time-adventure/
 - 점수 및 연속 정답 표시
 - 모바일/태블릿 대응
 - GitHub Pages 정적 배포
+- Google Analytics 4 페이지뷰 추적
+
+## 📊 Analytics
+
+Google Analytics 4를 사용합니다.
+
+- Measurement ID: `G-PZBDJ1CESH`
+- 방식: `gtag.js`
+- 현재 추적: 기본 페이지뷰
+
+동일 계정의 `quiz-proverb` 프로젝트와 같은 GA4 측정 ID를 사용합니다.
 
 ## 🗂 프로젝트 구조
 
 ```text
 time-adventure/
-├── index.html   # 화면 구조
+├── index.html   # 화면 구조 + GA4
 ├── style.css    # UI 및 반응형 스타일
 ├── app.js       # 문제 생성, 게임 상태, 정답 판정
 ├── .nojekyll    # GitHub Pages 정적 파일 처리
@@ -116,6 +127,7 @@ GitHub Pages에서 `main` 브랜치의 `/ (root)`를 배포 대상으로 사용�
 - 첫 사용자를 위한 짧은 튜토리얼
 - 정답/오답 피드백 개선
 - 학습 세션 및 성취감 설계
+- GA4 커스텀 이벤트 (`문제 시작`, `정답`, `오답`, `난이도 변경`) 추가
 
 ## 원칙
 
